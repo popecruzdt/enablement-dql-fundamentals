@@ -1,0 +1,242 @@
+{
+    "version": "7",
+    "defaultTimeframe": {
+        "from": "now()-30d",
+        "to": "now()"
+    },
+    "defaultSegments": [],
+    "sections": [
+        {
+            "id": "96295fdd-64d9-4451-b636-3dfd5334bf74",
+            "type": "markdown",
+            "markdown": "#### Lookup Tables Required\nYou will need the following lookup tables created to complete these exercises:\n* ip_geo_locations\n* user_agents\n* web_path_vulnerabilities"
+        },
+        {
+            "id": "2171d263-d31b-4668-96c3-e67ebc476546",
+            "type": "markdown",
+            "markdown": "#### Log Data Validation\nValidate that you have the correct data set for this exercise.  You should have **1000** log records.  Here is an example log record's `content` field:\n\nNginx Access Log:\n```\n3.91.157.123 - [24/Jul/2025:10:32:19 +0000] \"POST /broker-service/v1/balance/35/deposit HTTP/1.1\" 200 56 \"http://frontendreverseproxy-easytrade/deposit\" \"Mozilla/5.0 (Windows; U; Windows 98; Win 9x 4.90) AppleWebKit/533.11.4 (KHTML, like Gecko) Version/5.1 Safari/533.11.4\"\n```"
+        },
+        {
+            "id": "76ed6166-5e30-42d4-9c73-72b568f6ba66",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\"\n| summarize logs = count()"
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 5000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 10,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "87b77d06-5924-4007-9ac0-4ffb62f7a309",
+            "type": "markdown",
+            "markdown": "#### Log Content Format\nThe nginx access logs follow a standard structure, as follows:\n\n`$client_ip_address` `$remote_user_name` \\[`$timestamp (dd/MMM/yyyy:HH:mm:ss Z)`\\] \"`$http_request`\" `$http_status` `$http_response_size` \"`$http_referrer`\" \"`$http_user_agent`\" "
+        },
+        {
+            "id": "84f2c186-82c2-40ff-947d-0db783ea178d",
+            "type": "markdown",
+            "markdown": "#### Using the search command, find all of the access log records with a POST http method.  How many hits/records match?\n\nWrite a `search` command that includes any records with the string `POST /`."
+        },
+        {
+            "id": "3a9c6f21-bc8e-42c6-8056-b32fb52fc43c",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "75705855-e949-4b85-834e-f4804b427d63",
+            "type": "markdown",
+            "markdown": "#### What is the average response size across all records in the access log?\nWrite a `parse` command to parse the `content` field and extract the values matching the nginx access log structure/format.  After extracting the `http_response_size`, use the `summarize` command to aggregate the results."
+        },
+        {
+            "id": "f0ca9960-7937-4e07-8e3a-4d5dfd8c6efa",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "0084d3e9-2200-4b1b-a1f0-bfc56b3f8b18",
+            "type": "markdown",
+            "markdown": "#### There's an issue when the 'broker-service' is accessed using Chrome browser (any version) running on Android mobile devices with an OS version less than 10.0.  Based on the access log records, how many times were 'broker-service' URLs accessed from the affected browsers? (Chrome on Android < v10.0)\n\n* Use the `search` command to find logs where the `/broker-service/` endpoints are invoked\n* Use the `parse` command from the previous exercise, you need the `http_user_agent` in particular\n* Use the `lookup` command to `load` the **user_agents** lookup table you created via the API"
+        },
+        {
+            "id": "c4328b9d-e59d-433e-b5bf-a363df40ddd9",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "616ef5fc-e47b-4b0f-bb90-d8b7f34147e0",
+            "type": "markdown",
+            "markdown": "#### How many requests, based on all records in the access log, originated from within the United States?\n\n* Use the `parse` command from the previous exercise, you need the `client_ip` in particular\n* Use the `lookup` command to `load` the **ip_geo_locations** lookup table you created via the API"
+        },
+        {
+            "id": "eb971329-7018-4409-8187-fd40a318b1d8",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "4523a85e-1a9b-4107-879e-47268125a428",
+            "type": "markdown",
+            "markdown": "#### In this scenario, traffic originating from Russia is abnormal and raises security concerns.  Our team is concerned that our application is vulnerable to **CVE-2019-11043**.  Was there any suspicious traffic detected that could exploit this known vulnerability? If so, from where?\n\n* Use the `parse` command from the previous exercise, you need the `client_ip` and `http_request` in particular\n* Use a second `parse` command to extract the `http_uri` from the `http_request` field\n* Use the `lookup` command to `load` the **web_path_vulnerabilities** lookup table you created via the API\n* Use the `lookup` command to `load` the **ip_geo_locations** lookup table you created via the API\n* Filter your results on the **CVE-2019-11043** vulnerability"
+        },
+        {
+            "id": "74fea15f-0541-43e1-a972-02eed9241940",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        }
+    ]
+}

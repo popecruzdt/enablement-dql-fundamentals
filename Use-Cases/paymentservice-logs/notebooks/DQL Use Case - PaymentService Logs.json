@@ -1,0 +1,497 @@
+{
+    "version": "7",
+    "defaultTimeframe": {
+        "from": "now()-30d",
+        "to": "now()"
+    },
+    "defaultSegments": [],
+    "sections": [
+        {
+            "id": "101efec9-0c57-4633-8956-17c34981ee7a",
+            "type": "markdown",
+            "markdown": "#### Lookup Tables Required\nYou will need the following lookup tables created to complete these exercises:\n* payment-service-user-lookup\n* payment-service-error-codes"
+        },
+        {
+            "id": "2171d263-d31b-4668-96c3-e67ebc476546",
+            "type": "markdown",
+            "markdown": "#### Log Data Validation\nValidate that you have the correct data set for this exercise.  You should have **2439** log records.  Here is an example log record's `content` field:\n\nPaymentService Transaction Log with Failure:\n```\n2025-07-24T00:39:27Z INFO [PaymentServiceThread] '<paymentservice name=\"paymentservice\" version=\"1.2.0\"><transaction type=\"payment\" stage=\"execution\" id=\"418716e5-630d-4d31-a523-e49a21089446\"><card lastFour=\"5642\" zip=\"97504\" exp=\"0829\" /><user id=\"u552293\" /><amount value=\"328.13\" currency=\"USD\" tax=\"16.41\" /><result status=\"FAIL\"><error code=\"5012\" /><error code=\"5010\" /><error code=\"1011\" /></result></transaction></paymentservice>'\n```"
+        },
+        {
+            "id": "76ed6166-5e30-42d4-9c73-72b568f6ba66",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\"\n| search \"[PaymentServiceThread]\"\n| summarize logs = count()"
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 5000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 10,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "cce67cb1-4861-4c4c-8364-66aa30cdeff1",
+            "type": "markdown",
+            "markdown": "#### Log Content Format\nThe PaymentService logs follow a set structure, as follows:\n\n`$timestamp` `$loglevel` \\[PaymentServiceThread\\] '`$message (XML)`'"
+        },
+        {
+            "id": "84f2c186-82c2-40ff-947d-0db783ea178d",
+            "type": "markdown",
+            "markdown": "#### Which of the following is a correct DPL pattern to parse the log content?\n\nWrite a `parse` command that extracts the original timestamp, loglevel, and XML structured message from the content field.\n\n* \"ISO8601:original_ts SPACE WORD:loglevel SPACE '[PaymentServiceThread]' SPACE PUNCT{1} XML:message\"\n\n* \"TIMESTAMP:original_ts SPACE WORD:loglevel SPACE '[PaymentServiceThread]' SPACE PUNCT{1} JSON:message\"\n\n* \"HTTPDATE:original_ts SPACE STRING:loglevel SPACE '[PaymentServiceThread]' SPACE PUNCT{1} XML_PLAIN:message\""
+        },
+        {
+            "id": "3a9c6f21-bc8e-42c6-8056-b32fb52fc43c",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "thresholds": [],
+                    "chartSettings": {
+                        "gapPolicy": "gap",
+                        "circleChartSettings": {
+                            "groupingThresholdType": "relative",
+                            "groupingThresholdValue": 0,
+                            "valueType": "relative"
+                        },
+                        "categoryOverrides": {},
+                        "curve": "linear",
+                        "pointsDisplay": "auto",
+                        "categoricalBarChartSettings": {
+                            "layout": "horizontal",
+                            "categoryAxisTickLayout": "horizontal",
+                            "scale": "absolute",
+                            "groupMode": "stacked",
+                            "colorPaletteMode": "multi-color",
+                            "valueAxisScale": "linear"
+                        },
+                        "colorPalette": "categorical",
+                        "valueRepresentation": "absolute",
+                        "truncationMode": "end"
+                    },
+                    "table": {
+                        "rowDensity": "condensed",
+                        "enableSparklines": false,
+                        "hiddenColumns": [],
+                        "linewrapEnabled": false,
+                        "lineWrapIds": [],
+                        "monospacedFontEnabled": false,
+                        "monospacedFontColumns": [],
+                        "firstVisibleRowIndex": 0,
+                        "columnWidths": {},
+                        "columnTypeOverrides": []
+                    },
+                    "honeycomb": {
+                        "shape": "hexagon",
+                        "legend": {
+                            "hidden": false,
+                            "position": "auto",
+                            "ratio": "auto"
+                        },
+                        "dataMappings": {},
+                        "displayedFields": [],
+                        "truncationMode": "end",
+                        "labels": {
+                            "showLabels": false
+                        },
+                        "colorMode": "color-palette",
+                        "colorPalette": "categorical"
+                    },
+                    "histogram": {
+                        "legend": {
+                            "position": "auto"
+                        },
+                        "yAxis": {
+                            "label": "Frequency",
+                            "isLabelVisible": true,
+                            "scale": "linear"
+                        },
+                        "colorPalette": "categorical",
+                        "dataMappings": [],
+                        "variant": "single",
+                        "truncationMode": "end"
+                    },
+                    "valueBoundaries": {
+                        "min": "auto",
+                        "max": "auto"
+                    },
+                    "autoSelectVisualization": true
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "state": "idle",
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "75705855-e949-4b85-834e-f4804b427d63",
+            "type": "markdown",
+            "markdown": "#### How many logs have \"FAIL\" in them, indicating a PaymentService transaction failure?\n\n* Use the `search` command to find matching logs\n* Use the `summarize` command to count the number of failures"
+        },
+        {
+            "id": "f0ca9960-7937-4e07-8e3a-4d5dfd8c6efa",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "0084d3e9-2200-4b1b-a1f0-bfc56b3f8b18",
+            "type": "markdown",
+            "markdown": "#### Which error code occurred the most (highest count)?\n\n* Use the `parse` command to extract fields from the `content` field, the error code details are in the XML structured message\n* Use the `filter` command to focus on failed transactions that contain error codes in the message\n* Use the `expand` command expand the `errors` array, as each transaction failure could have multiple error codes\n* Use the `summarize` command to count the number of entries by error code"
+        },
+        {
+            "id": "c4328b9d-e59d-433e-b5bf-a363df40ddd9",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "616ef5fc-e47b-4b0f-bb90-d8b7f34147e0",
+            "type": "markdown",
+            "markdown": "#### How many refunds were successfully validated?\n\n* Use the `search` command to find records that contain \"refund\", \"validation\", and \"success\""
+        },
+        {
+            "id": "eb971329-7018-4409-8187-fd40a318b1d8",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "4523a85e-1a9b-4107-879e-47268125a428",
+            "type": "markdown",
+            "markdown": "#### How much revenue was generated by successful (validated) payments?\n\n* Use the `parse` command from the previous exercise, you will need the `transaction[result][@status]`, `transaction[@stage]`, `transaction[amount][@value]` in particular\n* Use the `filter` command to focus on logs where the `transaction stage == validation` and the `transaction status == \"success\"\n* Use the `summarize` command to calculate the sum of `transaction amount`"
+        },
+        {
+            "id": "74fea15f-0541-43e1-a972-02eed9241940",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "127b38b3-485f-491c-aa89-4cc6a564872b",
+            "type": "markdown",
+            "markdown": "#### What was the average amount refunded?\n\n* Use the `search` command to find logs that contain \"refund\", \"validation\" and \"success\"\n* Use the `parse` command from the previous exercise, you will need the `transaction[amount][@value]` in particular\n* Use the `summarize` command to calculate the average value of the `transaction amount`"
+        },
+        {
+            "id": "fe653698-04c2-4c5a-8e9f-b588dfe63f45",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "f360d779-aa3b-474d-a597-4b74ffbb4e0b",
+            "type": "markdown",
+            "markdown": "#### Based on the lookup data, how many users are in the system?\n\n* Use the `load` command to view the **payment-service-user-lookup** lookup table you created via the API"
+        },
+        {
+            "id": "be3b038b-b2cc-4a90-ad6e-113a30e67893",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "load"
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "99d3d1a2-071f-4568-a72a-e48a904c6c8a",
+            "type": "markdown",
+            "markdown": "#### User Margaret Wilson took to social media and complained they were unable to purchase on our website because of a payment error.  They then opened a ticket with our support team asking for it to be fixed.  What happened to this user?\n\n* Use the `search` command to find log records that contain \"FAIL\"\n* Use the `parse` command from the previous exercise, you will need the `transaction` details and `error` details in particular\n* Use the `lookup` command to `load` the **payment-service-user-lookup** lookup table you created via the API\n* Use the `lookup` command to `load` the **payment-service-error-codes** lookup table you created via the API\n* Use the `filter` command to focus on results for \"Margaret Wilson\""
+        },
+        {
+            "id": "90c06c3b-3a5f-4d6e-a875-acbc0cdb6765",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "d30739d1-8000-4fcf-b9ee-5eaa3fd339a0",
+            "type": "markdown",
+            "markdown": "#### Transactions that fail with an 'invalid transaction id' during the validation stage require manual audit and follow-up. Identify these transactions.  There are (10) transactions that require follow-up, including transaction_id 'fa28b512-54ff-418e-8d9e-1c2fa6465bc7'.\n\n* Use the `search` command to find failed transactions\n* Use the `parse` command from the previous exercise, you will need the `transaction` details and `error` details in particular\n* Use the `lookup` command to `load` the **payment-service-error-codes** lookup table you created via the API\n* Use the `expand` command expand the `errors` array, as each transaction failure could have multiple error codes\n* Use the `filter` command to focus on records where `transaction stage == validation` and `error name == invalid transaction id`"
+        },
+        {
+            "id": "f2dc99c3-0104-4018-a3da-0372eb9d0de1",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "51bf9da6-e91a-4cf6-8946-c6345d773b5f",
+            "type": "markdown",
+            "markdown": "#### We value customer loyalty and want to send coupon codes to diamond members that experienced system issues (error codes starting with '50').  How many transactions attempted by diamond members failed due to system issues and how much potential revenue was lost?\n\n* Use the `parse` command from the previous exercise, you will need the `transaction` details and `error` details in particular\n* Use the `lookup` command to `load` the **payment-service-user-lookup** lookup table you created via the API\n* Use the `expand` command expand the `errors` array, as each transaction failure could have multiple error codes\n* Use the `filter` command to focus on records where `transaction status == FAIL`, `user tier == diamond`, and `error code starts with 50`\n* Use the `summarize` command to count the distinct transactions and calculate the sum of the transaction amounts"
+        },
+        {
+            "id": "adee502e-5657-4685-80e5-d5d9189e2b07",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "now()-30d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        }
+    ]
+}
