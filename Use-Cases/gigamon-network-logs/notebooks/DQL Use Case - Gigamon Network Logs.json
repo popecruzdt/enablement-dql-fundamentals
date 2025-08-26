@@ -1,0 +1,279 @@
+{
+    "version": "7",
+    "defaultTimeframe": {
+        "from": "now()-30d",
+        "to": "now()"
+    },
+    "defaultSegments": [],
+    "sections": [
+        {
+            "id": "101efec9-0c57-4633-8956-17c34981ee7a",
+            "type": "markdown",
+            "markdown": "#### Lookup Tables Required\nYou will need the following lookup tables created to complete these exercises:\n* gigamon-ip-enriched-table\n* tls-cipher-suites-table"
+        },
+        {
+            "id": "2171d263-d31b-4668-96c3-e67ebc476546",
+            "type": "markdown",
+            "markdown": "#### Log Data Validation\nValidate that you have the correct data set for this exercise.  You should have **7425** log records.  Here is an example log record's `content` field:\n\nGigamon Network log with ICMP traffic via Application Intelligence:\n```\n{\"ts\":\"Mon Aug 11 15:01:29 2025\",\"vendor\":\"Gigamon\",\"version\":\"6.8.00\",\"generator\":\"gs_apps_appInst94_ec2ca875-4833-e3dd-a007-703e35bccfc1\",\"dst_mac\":\"00:16:3c:f1:fd:6d\",\"src_mac\":\"64:9e:f3:be:db:66\",\"src_ip\":\"54.242.97.58\",\"dst_ip\":\"198.71.247.91\",\"protocol\":\"1\",\"device_inbound_interface\":\"0\",\"app_id\":\"70\",\"tcp_flags\":\"0\",\"src_bytes\":\"2254\",\"dst_bytes\":\"2254\",\"src_packets\":\"23\",\"dst_packets\":\"23\",\"flow_start_usec\":\"2025:01:27 21:28:55.704.110\",\"flow_end_usec\":\"2025:01:27 21:28:57.309.742\",\"start_time\":\"2025:01:27 21:28:55.703\",\"end_time\":\"2025:01:27 21:28:57.311\",\"flow_start_sec\":\"2025:01:27 21:28:54\",\"flow_end_sec\":\"2025:01:27 21:28:56\",\"intf_name\":\"0\",\"egress_intf_id\":\"0\",\"app_name\":\"icmp\",\"id\":\"6470375155320225793\",\"seq_num\":\"19389\",\"log.source\":\"9b1deb4d-5b8f-4f1a-9c3e-3b6f6e8b8c5f\",\"timestamp\":\"2025-08-12T20:26:03.240Z\"}\n```"
+        },
+        {
+            "id": "76ed6166-5e30-42d4-9c73-72b568f6ba66",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "@d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\"\n| search \"Gigamon\"\n| summarize logs = count()"
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 5000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 10,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "cce67cb1-4861-4c4c-8364-66aa30cdeff1",
+            "type": "markdown",
+            "markdown": "#### Log Content Format\nThe Gigamon network logs are `JSON` structured.  Dynatrace will automatically parse the JSON fields into separate attributes.  The exact attributes will vary based on the monitored network traffic.  The basic structure is as follows:\n\n```JSON\n{\n  \"ts\": \"DayOfWeek Month Day HH:MM:SS Year\",\n  \"vendor\": \"Gigamon\",\n  \"version\": \"6.8.00\",\n  \"generator\": \"gs_apps_appInst94_ec2ca875-4833-e3dd-a007-703e35bccfc1\",\n  \"id\": \"LONG\",\n  \"dst_mac\": \"MAC address\",\n  \"src_mac\": \"MAC address\",\n  \"src_ip\": \"IPv4\",\n  \"dst_ip\": \"IPv4\",\n  \"protocol\": \"INTEGER\",\n  \"app_id\": \"INTEGER\",\n  \"app_name\": \"STRING\",\n  \"tcp_flags\": \"INTEGER\",\n  \"src_bytes\": \"LONG\",\n  \"dst_bytes\": \"LONG\",\n  \"src_packets\": \"LONG\",\n  \"dst_packets\": \"LONG\"\n}\n```"
+        },
+        {
+            "id": "75705855-e949-4b85-834e-f4804b427d63",
+            "type": "markdown",
+            "markdown": "#### How many distinct applications, sources, and destinations were observed in the network traffic?\n\n* Use the `summarize` command aggregate information from the entire data set\n* Use the `countDistinct` function to count the distinct values across the (3) desired attributes"
+        },
+        {
+            "id": "f0ca9960-7937-4e07-8e3a-4d5dfd8c6efa",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "@d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "0084d3e9-2200-4b1b-a1f0-bfc56b3f8b18",
+            "type": "markdown",
+            "markdown": "#### What are the top 10 apps based on slowest average TCP round-trip-time (rtt)?  For each app, what is the maximum TCP round-trip-time, total number of bytes, number of servers, and number of clients?\n\n* Use the `filter` command to focus on log records where the `tcp_rtt` attribute exists\n* Use the `summarize` command to aggregate log records and calculate the avg, max, sum, and distinct values\n* Use the `sort` and `limit` commands to identify only the top 10"
+        },
+        {
+            "id": "c4328b9d-e59d-433e-b5bf-a363df40ddd9",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "@d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "616ef5fc-e47b-4b0f-bb90-d8b7f34147e0",
+            "type": "markdown",
+            "markdown": "#### One of our cloud engineers has demonstrated low productivity.  We expect them to be using the corporate network to manage our AWS cloud resources.  Their IP address is '172.16.133.66'. How many personal use applications have they used and how many bytes of network traffic have they generated?\n\n* Use the `search` command to find records that contain the engineer's IP address\n* Use the `filter` command to focus on records that are related to personal apps\n* Use the `summarize` command to aggregate the data and calculate the amount of network traffic"
+        },
+        {
+            "id": "eb971329-7018-4409-8187-fd40a318b1d8",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "@d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "4523a85e-1a9b-4107-879e-47268125a428",
+            "type": "markdown",
+            "markdown": "#### In order to increase corporate network security, a new policy will go into effect that enforces all SSL/TLS traffic to use a cipher with a key size of at least 256 bits.  Identify any servers on the network that are using SSL/TLS with cipher key size less than 256 bits.\n\n* Use the `filter` or `filterOut` command to focus on records where the SSL cipher was detected (`ssl_cipher_suite_id`)\n* Use the `summarize` command to aggregate records across servers (`dst_ip`) and their SSL cipher\n* Use the `lookup` command to `load` the **tls_cipher_suites** lookup table you created via the API\n* Use the `filter` command to focus on private servers with a key size less than 128 bit"
+        },
+        {
+            "id": "74fea15f-0541-43e1-a972-02eed9241940",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "@d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "127b38b3-485f-491c-aa89-4cc6a564872b",
+            "type": "markdown",
+            "markdown": "#### Peer-to-peer network applications are restricted on the corporate network.  This includes apps like 'bittorrent', 'edonkey', 'kazaa', 'gnutella', and 'ares'.  Identify any internal devices that are transmitting network traffic for these restricted apps and their location.  Which location has generated the most network traffic (bytes)?\n\n* Use the `filter` command to focus on records where the observed application name is one of the peer-to-peer network applications\n* Use the `fieldsAdd` and `expand` commands to merge `src_ip` devices and `dst_ip` devices into a single list\n* Use the `filter` command to focus on devices with a private address\n* Use the `summarize` command to aggregate records, remove duplicates, and calculate the total network bytes (`src_bytes` + `dst_bytes`)\n* Use the `lookup` command to `load` the **gigamon_ip_enriched_table** lookup table you created via the API"
+        },
+        {
+            "id": "fe653698-04c2-4c5a-8e9f-b588dfe63f45",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "@d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        },
+        {
+            "id": "f360d779-aa3b-474d-a597-4b74ffbb4e0b",
+            "type": "markdown",
+            "markdown": "#### Crypto mining activity is dangerous and forbidden on the corporate network.  This includes apps like \"bitcoin\", \"ethereum\", \"ethereum-nd\", \"minexmr-com\", and \"monero\".  The top security threat is the presence of network nodes that show both inbound and outbound crypto mining traffic.  Identify any nodes with this traffic pattern and their corporate asset id.\n\n* This use case is a good candidate for the `join` command\n* Use the `filter` command to focus on the records where the application name is one of the crypto mining applications\n* Use the `summarize` command to aggregate the records based on private `src_ip` values\n* Use the `join` command to perform a similar query based on private `dst_ip` values, keeping the records that exist in both sets\n* Use the `load` command to view the **gigamon_ip_enriched_table** lookup table you created via the API"
+        },
+        {
+            "id": "be3b038b-b2cc-4a90-ad6e-113a30e67893",
+            "type": "dql",
+            "filterSegments": [],
+            "drilldownPath": [],
+            "previousFilterSegments": [],
+            "state": {
+                "input": {
+                    "timeframe": {
+                        "from": "@d",
+                        "to": "now()"
+                    },
+                    "value": "fetch logs\n| filter log.source == \"<paste-your-unique-id-here>\""
+                },
+                "visualizationSettings": {
+                    "chartSettings": {}
+                },
+                "querySettings": {
+                    "maxResultRecords": 1000,
+                    "defaultScanLimitGbytes": 500,
+                    "maxResultMegaBytes": 1,
+                    "defaultSamplingRatio": 10,
+                    "enableSampling": false
+                },
+                "davis": {
+                    "includeLogs": true,
+                    "davisVisualization": {
+                        "isAvailable": true
+                    }
+                }
+            }
+        }
+    ]
+}
