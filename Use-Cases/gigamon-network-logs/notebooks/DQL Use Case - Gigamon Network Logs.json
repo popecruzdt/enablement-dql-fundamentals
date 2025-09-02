@@ -167,7 +167,7 @@
         {
             "id": "4523a85e-1a9b-4107-879e-47268125a428",
             "type": "markdown",
-            "markdown": "#### In order to increase corporate network security, a new policy will go into effect that enforces all SSL/TLS traffic to use a cipher with a key size of at least 256 bits.  Identify any servers on the network that are using SSL/TLS with cipher key size less than 256 bits.\n\n* Use the `filter` or `filterOut` command to focus on records where the SSL cipher was detected (`ssl_cipher_suite_id`)\n* Use the `summarize` command to aggregate records across servers (`dst_ip`) and their SSL cipher\n* Use the `lookup` command to `load` the **tls_cipher_suites** lookup table you created via the API\n* Use the `filter` command to focus on private servers with a key size less than 128 bit"
+            "markdown": "#### In order to increase corporate network security, a new policy will go into effect that enforces all SSL/TLS traffic to use a cipher with a key size of at least 256 bits.  Identify any servers on the network that are using SSL/TLS with cipher key size less than 256 bits.\n\n* Use the `filter` or `filterOut` command to focus on records where the SSL cipher was detected (`ssl_cipher_suite_id`)\n* Use the `summarize` command to aggregate records across servers (`dst_ip`) and their SSL cipher\n* Use the `lookup` command to `load` the **tls_cipher_suites** lookup table you created via the API\n* Use the `filter` command to focus on private servers with a key size less than 256 bits"
         },
         {
             "id": "74fea15f-0541-43e1-a972-02eed9241940",
